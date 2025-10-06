@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@custom-variant hover (&:hover);
+
+@theme inline {
+  --color-primary: #df620c;
+  --color-secondary: #13276c;
+  --color-background: #eeeeee;
+  --color-background-secondary: #4169a4;
+  --color-main-gray: #525252;
+}
+
+button {
+  @apply cursor-pointer;
+}
+
+input {
+  @apply outline-0;
+}
