@@ -8,17 +8,33 @@ const categories = [
   {
     title: "Visual Arts",
     items: [
-      { name: "The Golden Mask", artist: "Koni Kode", image: "/images/art1.png" },
+      {
+        name: "The Golden Mask",
+        artist: "Koni Kode",
+        image: "/images/art1.png",
+      },
       { name: "Queen Mother", artist: "Koni Kode", image: "/images/art1.png" },
-      { name: "Bronze Guardian", artist: "Ayo Bello", image: "/images/art1.png" },
-      { name: "The Bronze Dancers", artist: "Koni Kode", image: "/images/art1.png" },
+      {
+        name: "Bronze Guardian",
+        artist: "Ayo Bello",
+        image: "/images/art1.png",
+      },
+      {
+        name: "The Bronze Dancers",
+        artist: "Koni Kode",
+        image: "/images/art1.png",
+      },
     ],
   },
   {
     title: "Music",
     items: [
       { name: "Soul Rhythm", artist: "Ada Eze", image: "/images/art1.png" },
-      { name: "The Talking Drum", artist: "Koni Kode", image: "/images/art1.png" },
+      {
+        name: "The Talking Drum",
+        artist: "Koni Kode",
+        image: "/images/art1.png",
+      },
       { name: "Afro Harmony", artist: "Lekan Ayo", image: "/images/art1.png" },
       { name: "Afro Harmony", artist: "Lekan Ayo", image: "/images/art1.png" },
     ],
@@ -27,7 +43,11 @@ const categories = [
     title: "Folktales",
     items: [
       { name: "Soul Rhythm", artist: "Ada Eze", image: "/images/art1.png" },
-      { name: "The Talking Drum", artist: "Koni Kode", image: "/images/art1.png" },
+      {
+        name: "The Talking Drum",
+        artist: "Koni Kode",
+        image: "/images/art1.png",
+      },
       { name: "Afro Harmony", artist: "Lekan Ayo", image: "/images/art1.png" },
       { name: "Afro Harmony", artist: "Lekan Ayo", image: "/images/art1.png" },
     ],
@@ -36,7 +56,11 @@ const categories = [
     title: "Dance",
     items: [
       { name: "Soul Rhythm", artist: "Ada Eze", image: "/images/art1.png" },
-      { name: "The Talking Drum", artist: "Koni Kode", image: "/images/art1.png" },
+      {
+        name: "The Talking Drum",
+        artist: "Koni Kode",
+        image: "/images/art1.png",
+      },
       { name: "Afro Harmony", artist: "Lekan Ayo", image: "/images/art1.png" },
       { name: "Afro Harmony", artist: "Lekan Ayo", image: "/images/art1.png" },
     ],
@@ -45,7 +69,11 @@ const categories = [
     title: "Sculpture",
     items: [
       { name: "Soul Rhythm", artist: "Ada Eze", image: "/images/art1.png" },
-      { name: "The Talking Drum", artist: "Koni Kode", image: "/images/art1.png" },
+      {
+        name: "The Talking Drum",
+        artist: "Koni Kode",
+        image: "/images/art1.png",
+      },
       { name: "Afro Harmony", artist: "Lekan Ayo", image: "/images/art1.png" },
       { name: "Afro Harmony", artist: "Lekan Ayo", image: "/images/art1.png" },
     ],
@@ -56,13 +84,17 @@ const categories = [
 export default function FeaturedArts() {
   return (
     <section className="bg-[#eeeeee] py-16 px-4 md:px-10">
-      <h2 className="text-center text-black text-4xl md:text-5xl font-bold pb-15">Featured Arts</h2>
+      <h2 className="text-center text-black text-4xl md:text-5xl font-bold pb-15">
+        Featured Arts
+      </h2>
       {categories.map((category, index) => (
         <div key={index} className="mb-14">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl text-black font-semibold">{category.title}</h2>
-            <button className="text-orange-500 hover:text-orange-400 transition-all font-medium">
+            <h2 className="text-2xl text-black font-semibold">
+              {category.title}
+            </h2>
+            <button className="text-[#DF620C]/80 hover:text-orange-400 transition-all font-medium">
               See All &gt;&gt;&gt;
             </button>
           </div>
@@ -101,7 +133,10 @@ export default function FeaturedArts() {
                         <h3 className="text-sm font-semibold">{art.name}</h3>
                         <p className="text-xs text-gray-600">by {art.artist}</p>
                       </div>
-                      <Heart size={16} className="text-gray-400 hover:text-red-500 cursor-pointer" />
+                      <Heart
+                        size={16}
+                        className="text-gray-400 hover:text-red-500 cursor-pointer"
+                      />
                     </div>
                   </div>
                 </div>
@@ -113,7 +148,7 @@ export default function FeaturedArts() {
 
       {/* Global See All */}
       <div className="flex justify-center mt-10">
-        <button className="bg-orange-600 hover:bg-orange-500 text-white px-6 py-2 rounded-lg font-semibold transition-all">
+        <button className="bg-[#DF620C] hover:bg-[#DF620C]/80 text-white px-6 py-2 rounded-lg font-semibold transition-all">
           See All
         </button>
       </div>

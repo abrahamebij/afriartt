@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 
@@ -75,7 +75,7 @@ function LoginPage({ onSwitchToRegister }: { onSwitchToRegister: () => void }) {
         <div className="pt-4">
           <button
             onClick={handleSubmit}
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
+            className="w-full bg-[#DF620C] hover:bg-orange-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
           >
             Login
           </button>
@@ -86,7 +86,7 @@ function LoginPage({ onSwitchToRegister }: { onSwitchToRegister: () => void }) {
         No account?{" "}
         <button
           onClick={onSwitchToRegister}
-          className="text-orange-600 hover:text-orange-700 font-medium"
+          className="text-[#DF620C] hover:text-orange-700 font-medium"
         >
           Sign up
         </button>
@@ -191,7 +191,7 @@ function RegisterPage({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
         <div className="pt-4">
           <button
             onClick={handleSubmit}
-            className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
+            className="w-full bg-[#DF620C] hover:bg-orange-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
           >
             Sign Up
           </button>
@@ -202,7 +202,7 @@ function RegisterPage({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
         Already have an account?{" "}
         <button
           onClick={onSwitchToLogin}
-          className="text-orange-600 hover:text-orange-700 font-medium"
+          className="text-[#DF620C] hover:text-orange-700 font-medium"
         >
           Sign in
         </button>
