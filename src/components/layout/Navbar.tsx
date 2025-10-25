@@ -38,9 +38,11 @@ const Navbar = () => {
               Explore
             </Button>
           </Link>
-          <Button variant="ghost" className="hidden lg:inline-flex">
-            Create
-          </Button>
+          <Link href="/upload">
+            <Button variant="ghost" className="hidden lg:inline-flex">
+              Upload
+            </Button>
+          </Link>
           <Button className="gradient-warm border-0">
             <Wallet className="mr-2 h-4 w-4" />
             Connect Wallet
