@@ -24,7 +24,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased bg-background`}>
+      <body
+        className={`${inter.variable} antialiased bg-background text-foreground`}
+      >
         <Toaster position="top-right" richColors />
         <Navbar />
         {children}
