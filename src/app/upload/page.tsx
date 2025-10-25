@@ -1,354 +1,715 @@
-'use client';
+"use client";
+import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import {
+  Upload as UploadIcon,
+  X,
+  Image as ImageIcon,
+  Video,
+  Box,
+  Wallet,
+  AlertCircle,
+  CheckCircle2,
+  Loader2,
+} from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Img from "@/components/ui/Img";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { supabase } from '@/lib/supabase/client';
-import { Upload, CheckCircle, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+const Upload = () => {
+  const { user } = useAuth();
+  const router = useRouter();
 
-const CATEGORIES = [
-  { value: 'music', label: 'Music' },
-  { value: 'visual-art', label: 'Visual Art' },
-  { value: 'sculptures', label: 'Sculptures' },
-  { value: 'dance', label: 'Dance' },
-  { value: 'folk-tales', label: 'Folk Tales' },
-];
+  // Wallet connection state (mock - will be replaced with HashConnect)
+  const [walletConnected, setWalletConnected] = useState(false);
+  const [walletAddress, setWalletAddress] = useState("");
 
-
-export default function UploadArtworkPage() {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [price, setPrice] = useState('');
-  const [artistName, setArtistName] = useState('');
+  // Form state
   const [file, setFile] = useState<File | null>(null);
-  const [filePreview, setFilePreview] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
-  const [uploadedArtwork, setUploadedArtwork] = useState<{
-    id: string;
-    title: string;
-    description: string | null;
-    category: string;
-    file_url: string;
-    file_type: string;
-    price: number | null;
-    artist_name: string;
-  } | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [collection, setCollection] = useState("");
+  const [culturalTags, setCulturalTags] = useState<string[]>([]);
+  const [currentTag, setCurrentTag] = useState("");
+  const [royaltyPercentage, setRoyaltyPercentage] = useState("10");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
+  // Minting state
+  const [isMinting, setIsMinting] = useState(false);
+  const [mintingProgress, setMintingProgress] = useState(0);
+  const [mintingStep, setMintingStep] = useState("");
+  const [mintSuccess, setMintSuccess] = useState(false);
+  const [mintedTokenId, setMintedTokenId] = useState("");
+
+  // Drag and drop state
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Cultural tag suggestions
+  const culturalTagSuggestions = [
+    "West African Art",
+    "East African Heritage",
+    "North African Style",
+    "Southern African Culture",
+    "Malian Textile Art",
+    "Nigerian Contemporary",
+    "Ethiopian Traditional",
+    "Kenyan Street Art",
+    "South African Abstract",
+    "Ghanaian Symbolism",
+    "Senegalese Modern",
+    "Moroccan Geometric",
+  ];
+
+  // Redirect if not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-20">
+          <Card className="max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle>Authentication Required</CardTitle>
+              <CardDescription>
+                Please sign in to mint NFTs on AfriArtt
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button onClick={() => router.push("/login")} className="w-full">
+                Sign In
+              </Button>
+              <Button
+                onClick={() => router.push("/register")}
+                variant="outline"
+                className="w-full"
+              >
+                Create Account
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Mock wallet connection function
+  const connectWallet = async () => {
+    // This will be replaced with actual HashConnect integration
+    setWalletConnected(true);
+    setWalletAddress("0.0.1234567");
+    toast.success("Your Hedera wallet has been connected successfully.");
+  };
+
+  const handleFileChange = (selectedFile: File) => {
     if (selectedFile) {
-      setFile(selectedFile);
-
-      if (selectedFile.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setFilePreview(reader.result as string);
-        };
-        reader.readAsDataURL(selectedFile);
-      } else {
-        setFilePreview(null);
+      // Validate file type
+      const validTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+        "video/mp4",
+        "video/webm",
+        "model/gltf-binary",
+      ];
+      if (
+        !validTypes.includes(selectedFile.type) &&
+        !selectedFile.name.endsWith(".glb")
+      ) {
+        toast.error("Invalid File Type");
+        return;
       }
+
+      // Validate file size (max 50MB)
+      if (selectedFile.size > 50 * 1024 * 1024) {
+        toast.error("Please upload a file smaller than 50MB.");
+        return;
+      }
+
+      setFile(selectedFile);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(selectedFile);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    setIsDragging(true);
+  };
 
-    if (!title || !category || !file || !artistName) {
-      toast.error('Please fill in all required fields');
-      return;
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const droppedFile = e.dataTransfer.files[0];
+    if (droppedFile) {
+      handleFileChange(droppedFile);
     }
+  };
 
-    setIsUploading(true);
-    setUploadSuccess(false);
+  const addCulturalTag = (tag: string) => {
+    if (tag && !culturalTags.includes(tag) && culturalTags.length < 5) {
+      setCulturalTags([...culturalTags, tag]);
+      setCurrentTag("");
+    }
+  };
+
+  const removeCulturalTag = (tagToRemove: string) => {
+    setCulturalTags(culturalTags.filter((tag) => tag !== tagToRemove));
+  };
+
+  const isFormValid = () => {
+    return (
+      file &&
+      title.trim() !== "" &&
+      description.trim() !== "" &&
+      culturalTags.length > 0 &&
+      royaltyPercentage &&
+      parseFloat(royaltyPercentage) >= 0 &&
+      parseFloat(royaltyPercentage) <= 50
+    );
+  };
+
+  const handleMint = async () => {
+    if (!isFormValid() || !walletConnected) return;
+
+    setIsMinting(true);
+    setMintingProgress(0);
+    setMintSuccess(false);
 
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `artworks/${fileName}`;
+      // Step 1: Upload to IPFS
+      setMintingStep("Uploading to IPFS...");
+      setMintingProgress(25);
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate upload
 
-      const { error: uploadError } = await supabase.storage
-        .from('artworks')
-        .upload(filePath, file);
+      // Step 2: Create metadata
+      setMintingStep("Creating metadata...");
+      setMintingProgress(50);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      if (uploadError) {
-        if (uploadError.message.includes('Bucket not found')) {
-          toast.error('Storage bucket not configured. Please set up the artworks bucket in Supabase.');
-        } else {
-          toast.error(`Upload failed: ${uploadError.message}`);
-        }
-        setIsUploading(false);
-        return;
-      }
+      // Step 3: Minting on Hedera
+      setMintingStep("Minting on Hedera blockchain...");
+      setMintingProgress(75);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const { data: urlData } = supabase.storage
-        .from('artworks')
-        .getPublicUrl(filePath);
+      // Success
+      setMintingProgress(100);
+      setMintingStep("Minting complete!");
+      setMintSuccess(true);
+      setMintedTokenId("0.0.9876543"); // Mock token ID
 
-      const artworkData = {
-        title,
-        description: description || null,
-        category,
-        file_url: urlData.publicUrl,
-        file_type: file.type,
-        price: price ? parseFloat(price) : null,
-        artist_name: artistName,
-        status: 'active',
-      };
-
-      const { data: artwork, error: dbError } = await supabase
-        .from('artworks')
-        .insert([artworkData])
-        .select()
-        .maybeSingle();
-
-      if (dbError) {
-        toast.error(`Database error: ${dbError.message}`);
-        setIsUploading(false);
-        return;
-      }
-
-      setUploadedArtwork(artwork);
-      setUploadSuccess(true);
-      toast.success('Artwork uploaded successfully!');
-
-      setTitle('');
-      setDescription('');
-      setCategory('');
-      setPrice('');
-      setArtistName('');
-      setFile(null);
-      setFilePreview(null);
+      toast.success("Your artwork is now live on AfriArtt.");
     } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('An unexpected error occurred');
-    } finally {
-      setIsUploading(false);
+      toast.error("There was an error minting your NFT. Please try again.");
+      setIsMinting(false);
+      setMintingProgress(0);
+      setMintingStep("");
     }
   };
 
-  if (uploadSuccess && uploadedArtwork) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 py-12 px-4">
-        <div className="max-w-3xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-            <div className="flex justify-center mb-6">
-              <CheckCircle className="w-20 h-20 text-green-500" />
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Upload Successful!</h1>
-            <p className="text-gray-600 mb-8">Your artwork has been submitted to AfriArtt</p>
+  const getFileIcon = () => {
+    if (!file)
+      return <UploadIcon className="w-12 h-12 text-muted-foreground" />;
+    if (file.type.startsWith("image/"))
+      return <ImageIcon className="w-12 h-12 text-primary" />;
+    if (file.type.startsWith("video/"))
+      return <Video className="w-12 h-12 text-primary" />;
+    return <Box className="w-12 h-12 text-primary" />;
+  };
 
-            <div className="bg-gray-50 rounded-xl p-6 mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Artwork Preview</h2>
-              {uploadedArtwork.file_type.startsWith('image/') && (
-                <div className="mb-4">
-                  <img
-                    src={uploadedArtwork.file_url}
-                    alt={uploadedArtwork.title}
-                    className="w-full max-w-md mx-auto rounded-lg shadow-md"
-                    width={400}
-                    height={400}
-                  />
+  if (mintSuccess) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-20">
+          <Card className="max-w-2xl mx-auto text-center">
+            <CardHeader>
+              <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <CheckCircle2 className="w-8 h-8 text-primary" />
+              </div>
+              <CardTitle className="text-3xl">
+                NFT Minted Successfully!
+              </CardTitle>
+              <CardDescription className="text-lg">
+                Your artwork is now live on the AfriArtt marketplace
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {previewUrl && (
+                <div className="relative w-full max-w-md mx-auto aspect-square rounded-lg overflow-hidden">
+                  {file?.type.startsWith("image/") && (
+                    <Img
+                      src={previewUrl}
+                      alt={title}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                  {file?.type.startsWith("video/") && (
+                    <video
+                      src={previewUrl}
+                      className="w-full h-full object-cover"
+                      controls
+                    />
+                  )}
                 </div>
               )}
-              <div className="text-left max-w-md mx-auto space-y-2">
-                <p><strong>Title:</strong> {uploadedArtwork.title}</p>
-                {uploadedArtwork.description && (
-                  <p><strong>Description:</strong> {uploadedArtwork.description}</p>
-                )}
-                <p><strong>Category:</strong> {uploadedArtwork.category}</p>
-                <p><strong>Artist:</strong> {uploadedArtwork.artist_name}</p>
-                {uploadedArtwork.price && (
-                  <p><strong>Price:</strong> ${uploadedArtwork.price}</p>
-                )}
-              </div>
-            </div>
 
-            <div className="flex gap-4 justify-center">
-              <Button
-                onClick={() => {
-                  setUploadSuccess(false);
-                  setUploadedArtwork(null);
-                }}
-                variant="outline"
-              >
-                Upload Another
+              <div className="space-y-2">
+                <h3 className="font-semibold text-xl">{title}</h3>
+                <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                  <span>Token ID:</span>
+                  <code className="px-2 py-1 bg-muted rounded">
+                    {mintedTokenId}
+                  </code>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button onClick={() => router.push(`/profile/${user.email}`)}>
+                  View in Profile
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    window.open(
+                      `https://hashscan.io/testnet/token/${mintedTokenId}`,
+                      "_blank"
+                    )
+                  }
+                >
+                  View on Hedera Explorer
+                </Button>
+              </div>
+
+              <Button variant="ghost" onClick={() => window.location.reload()}>
+                Mint Another NFT
               </Button>
-              <Button onClick={() => window.location.href = '/explore'}>
-                View All Artworks
-              </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 py-12 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload Artwork</h1>
-            <p className="text-gray-600">Share your African art with the AfriArtt community</p>
+            <h1 className="text-4xl font-bold mb-2 text-gradient">
+              Mint Your NFT
+            </h1>
+            <p className="text-muted-foreground">
+              Share your African creativity with the world on the Hedera
+              blockchain
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <Label htmlFor="file" className="text-base font-semibold">
-                Artwork File <span className="text-red-500">*</span>
-              </Label>
-              <div className="mt-2">
-                <div className="flex items-center justify-center w-full">
-                  <label
-                    htmlFor="file"
-                    className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
-                  >
-                    {filePreview ? (
-                      <div className="relative w-full h-full p-4">
-                        <img
-                          src={filePreview}
-                          alt="Preview"
-                          className="w-full h-full object-contain rounded-lg"
-                          width={600}
-                          height={400}
-                        />
+          {/* Wallet Connection Alert */}
+          {!walletConnected && (
+            <Alert className="mb-6 border-primary/50 bg-primary/5 items-center">
+              <Wallet className="h-4 w-4" />
+              <AlertDescription className="flex items-center justify-between">
+                <span>Connect your Hedera wallet to mint NFTs</span>
+                <Button size="sm" onClick={connectWallet}>
+                  Connect Wallet
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {walletConnected && (
+            <Alert className="mb-6 border-primary bg-primary/5">
+              <CheckCircle2 className="h-4 w-4 text-primary" />
+              <AlertDescription className="flex items-center justify-between">
+                <span>Wallet connected: {walletAddress}</span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setWalletConnected(false)}
+                >
+                  Disconnect
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <div className="grid gap-6">
+            {/* File Upload */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Upload Artwork</CardTitle>
+                <CardDescription>
+                  Supported formats: JPG, PNG, GIF, WEBP, MP4, WEBM, GLB (Max
+                  50MB)
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`relative border-2 border-dashed rounded-lg p-8 transition-all ${
+                    isDragging
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <input
+                    type="file"
+                    id="file-upload"
+                    className="hidden"
+                    accept="image/*,video/*,.glb"
+                    onChange={(e) =>
+                      e.target.files?.[0] && handleFileChange(e.target.files[0])
+                    }
+                    disabled={isMinting}
+                  />
+
+                  {!file ? (
+                    <label
+                      htmlFor="file-upload"
+                      className="flex flex-col items-center justify-center cursor-pointer"
+                    >
+                      {getFileIcon()}
+                      <p className="mt-4 text-sm font-medium">
+                        Drag and drop or click to upload
+                      </p>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Upload your digital artwork to mint as an NFT
+                      </p>
+                    </label>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="relative w-full max-w-md mx-auto aspect-square rounded-lg overflow-hidden bg-muted">
+                        {file.type.startsWith("image/") && (
+                          <Img
+                            src={previewUrl}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                        {file.type.startsWith("video/") && (
+                          <video
+                            src={previewUrl}
+                            className="w-full h-full object-cover"
+                            controls
+                          />
+                        )}
+                        {file.name.endsWith(".glb") && (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Box className="w-24 h-24 text-primary" />
+                          </div>
+                        )}
+                        <Button
+                          size="icon"
+                          variant="destructive"
+                          className="absolute top-2 right-2"
+                          onClick={() => {
+                            setFile(null);
+                            setPreviewUrl("");
+                          }}
+                          disabled={isMinting}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
                       </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <Upload className="w-12 h-12 text-gray-400 mb-4" />
-                        <p className="mb-2 text-sm text-gray-500">
-                          <span className="font-semibold">Click to upload</span> or drag and drop
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Images, Videos, Audio, or 3D Models
+                      <div className="text-center">
+                        <p className="text-sm font-medium">{file.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {(file.size / 1024 / 1024).toFixed(2)} MB
                         </p>
                       </div>
-                    )}
-                    <input
-                      id="file"
-                      type="file"
-                      className="hidden"
-                      onChange={handleFileChange}
-                      accept="image/*,video/*,audio/*,.glb,.gltf,.obj"
-                    />
-                  </label>
+                    </div>
+                  )}
                 </div>
-                {file && (
-                  <p className="mt-2 text-sm text-gray-600">
-                    Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+              </CardContent>
+            </Card>
+
+            {/* NFT Details */}
+            <Card>
+              <CardHeader>
+                <CardTitle>NFT Details</CardTitle>
+                <CardDescription>
+                  Provide information about your artwork
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="title">
+                    Title <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="title"
+                    placeholder="Enter artwork title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    disabled={isMinting}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">
+                    Description <span className="text-destructive">*</span>
+                  </Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Describe your artwork, its inspiration, and cultural significance..."
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={5}
+                    disabled={isMinting}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="collection">Collection (Optional)</Label>
+                  <Select
+                    value={collection}
+                    onValueChange={setCollection}
+                    disabled={isMinting}
+                  >
+                    <SelectTrigger id="collection">
+                      <SelectValue placeholder="Select a collection or create new" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No Collection</SelectItem>
+                      <SelectItem value="create-new">
+                        + Create New Collection
+                      </SelectItem>
+                      <SelectItem value="african-heritage">
+                        African Heritage
+                      </SelectItem>
+                      <SelectItem value="modern-africa">
+                        Modern Africa
+                      </SelectItem>
+                      <SelectItem value="traditional-art">
+                        Traditional Art
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Cultural Tags */}
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  Cultural Identity <span className="text-destructive">*</span>
+                </CardTitle>
+                <CardDescription>
+                  Add tags to help collectors discover your work&apos;s cultural
+                  context (max 5)
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Type or select a tag"
+                      value={currentTag}
+                      onChange={(e) => setCurrentTag(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          addCulturalTag(currentTag);
+                        }
+                      }}
+                      disabled={isMinting || culturalTags.length >= 5}
+                    />
+                    <Button
+                      onClick={() => addCulturalTag(currentTag)}
+                      disabled={
+                        !currentTag || culturalTags.length >= 5 || isMinting
+                      }
+                    >
+                      Add
+                    </Button>
+                  </div>
+
+                  {culturalTags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 p-4 bg-muted rounded-lg">
+                      {culturalTags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="gap-1">
+                          {tag}
+                          <button
+                            onClick={() => removeCulturalTag(tag)}
+                            className="ml-1 hover:text-destructive"
+                            disabled={isMinting}
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Suggested tags:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {culturalTagSuggestions
+                      .filter((tag) => !culturalTags.includes(tag))
+                      .slice(0, 6)
+                      .map((tag) => (
+                        <Badge
+                          key={tag}
+                          variant="outline"
+                          className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                          onClick={() => addCulturalTag(tag)}
+                        >
+                          + {tag}
+                        </Badge>
+                      ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Royalty Settings */}
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  Royalty Settings <span className="text-destructive">*</span>
+                </CardTitle>
+                <CardDescription>
+                  Set your royalty percentage for future resales (0-50%)
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-4">
+                    <Input
+                      type="number"
+                      min="0"
+                      max="50"
+                      step="0.5"
+                      value={royaltyPercentage}
+                      onChange={(e) => setRoyaltyPercentage(e.target.value)}
+                      className="max-w-[120px]"
+                      disabled={isMinting}
+                    />
+                    <span className="text-sm font-medium">%</span>
+                  </div>
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription className="text-xs">
+                      You&apos;ll receive {royaltyPercentage}% of the sale price
+                      every time your NFT is resold. This is enforced by the
+                      Hedera smart contract.
+                    </AlertDescription>
+                  </Alert>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Minting Progress */}
+            {isMinting && (
+              <Card className="border-primary">
+                <CardContent className="pt-6 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{mintingStep}</p>
+                      <Progress value={mintingProgress} className="mt-2" />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Please don&apos;t close this window while your NFT is being
+                    minted...
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Review & Mint */}
+            <Card className="border-primary/50 bg-card">
+              <CardHeader>
+                <CardTitle>Review & Mint</CardTitle>
+                <CardDescription>
+                  Double-check your information before minting
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Title</p>
+                    <p className="font-medium">{title || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Royalty</p>
+                    <p className="font-medium">{royaltyPercentage}%</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Cultural Tags</p>
+                    <p className="font-medium">{culturalTags.length} tags</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">File</p>
+                    <p className="font-medium">
+                      {file ? "✓ Uploaded" : "Not uploaded"}
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  onClick={handleMint}
+                  disabled={!isFormValid() || !walletConnected || isMinting}
+                  className="w-full"
+                  size="lg"
+                >
+                  {isMinting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      Minting...
+                    </>
+                  ) : (
+                    "Mint NFT on AfriArtt"
+                  )}
+                </Button>
+
+                {!walletConnected && (
+                  <p className="text-xs text-center text-muted-foreground">
+                    Please connect your wallet to mint
                   </p>
                 )}
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="title" className="text-base font-semibold">
-                Title <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="title"
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter artwork title"
-                className="mt-2"
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="artistName" className="text-base font-semibold">
-                Artist Name <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="artistName"
-                type="text"
-                value={artistName}
-                onChange={(e) => setArtistName(e.target.value)}
-                placeholder="Enter artist name"
-                className="mt-2"
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="description" className="text-base font-semibold">
-                Description
-              </Label>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe your artwork, its inspiration, and cultural significance..."
-                className="mt-2 w-full min-h-[120px] px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-y"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="category" className="text-base font-semibold">
-                Category <span className="text-red-500">*</span>
-              </Label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="mt-2">
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIES.map((cat) => (
-                    <SelectItem key={cat.value} value={cat.value}>
-                      {cat.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="price" className="text-base font-semibold">
-                Price (USD) <span className="text-gray-500 text-sm font-normal">(Optional)</span>
-              </Label>
-              <Input
-                id="price"
-                type="number"
-                step="0.01"
-                min="0"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="0.00"
-                className="mt-2"
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                Leave empty if not for sale
-              </p>
-            </div>
-
-            <div className="pt-4">
-              <Button
-                type="submit"
-                disabled={isUploading}
-                className="w-full bg-orange-600 hover:bg-orange-700 text-white py-6 text-lg font-semibold"
-              >
-                {isUploading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Uploading...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="mr-2 h-5 w-5" />
-                    Upload Artwork
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Upload;
