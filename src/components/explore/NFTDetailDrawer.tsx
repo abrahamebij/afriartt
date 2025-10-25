@@ -12,6 +12,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import Img from "../ui/Img";
 
 interface NFTDetailDrawerProps {
   open: boolean;
@@ -24,7 +25,7 @@ interface NFTDetailDrawerProps {
     image: string;
     likes: number;
   };
-  onNFTChange?: (nft: NFTDetailDrawerProps['nft']) => void;
+  onNFTChange?: (nft: NFTDetailDrawerProps["nft"]) => void;
 }
 
 const ownershipHistory = [
@@ -46,14 +47,22 @@ const relatedNFTs = Array.from({ length: 6 }, (_, i) => ({
   creator: `Artist ${i + 1}`,
   price: (Math.random() * 5 + 0.5).toFixed(2),
   image: `/src/assets/nft-${(i % 6) + 1}.jpg`,
+  likes: Math.floor(Math.random() * 200),
 }));
 
-const NFTDetailDrawer = ({ open, onOpenChange, nft, onNFTChange }: NFTDetailDrawerProps) => {
+const NFTDetailDrawer = ({
+  open,
+  onOpenChange,
+  nft,
+  onNFTChange,
+}: NFTDetailDrawerProps) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
-      const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      const viewport = scrollAreaRef.current.querySelector(
+        "[data-radix-scroll-area-viewport]"
+      );
       if (viewport) {
         viewport.scrollTop = 0;
       }
@@ -93,7 +102,7 @@ const NFTDetailDrawer = ({ open, onOpenChange, nft, onNFTChange }: NFTDetailDraw
               {/* Left Column - Image */}
               <div className="space-y-6">
                 <div className="relative aspect-square rounded-xl overflow-hidden border border-border shadow-lg">
-                  <img
+                  <Img
                     src={nft.image}
                     alt={nft.title}
                     className="w-full h-full object-cover"
@@ -191,9 +200,10 @@ const NFTDetailDrawer = ({ open, onOpenChange, nft, onNFTChange }: NFTDetailDraw
                   <p className="text-muted-foreground leading-relaxed">
                     A stunning piece capturing the essence of African creativity
                     and culture. This artwork represents the vibrant colors and
-                    rich traditions of the continent, blending contemporary digital
-                    art with timeless cultural motifs. Each element has been
-                    carefully crafted to tell a story of heritage and innovation.
+                    rich traditions of the continent, blending contemporary
+                    digital art with timeless cultural motifs. Each element has
+                    been carefully crafted to tell a story of heritage and
+                    innovation.
                   </p>
                 </div>
 
@@ -202,7 +212,9 @@ const NFTDetailDrawer = ({ open, onOpenChange, nft, onNFTChange }: NFTDetailDraw
                 {/* Stats */}
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center p-3 bg-muted/50 rounded-lg">
-                    <p className="text-2xl font-bold text-primary">{nft.likes}</p>
+                    <p className="text-2xl font-bold text-primary">
+                      {nft.likes}
+                    </p>
                     <p className="text-xs text-muted-foreground mt-1">Likes</p>
                   </div>
                   <div className="text-center p-3 bg-muted/50 rounded-lg">
@@ -270,7 +282,7 @@ const NFTDetailDrawer = ({ open, onOpenChange, nft, onNFTChange }: NFTDetailDraw
                     onClick={() => handleRelatedClick(related)}
                   >
                     <div className="relative aspect-square rounded-lg overflow-hidden border border-border">
-                      <img
+                      <Img
                         src={related.image}
                         alt={related.title}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"

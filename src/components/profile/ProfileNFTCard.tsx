@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import NFTDetailDrawer from "@/components/explore/NFTDetailDrawer";
 import { toast } from "sonner";
+import Img from "../ui/Img";
 
 interface ProfileNFTCardProps {
   nft: {
@@ -39,7 +40,10 @@ const ProfileNFTCard = ({ nft }: ProfileNFTCardProps) => {
   const handleViewOnHedera = (e: React.MouseEvent) => {
     e.stopPropagation();
     toast.info("Opening Hedera transaction explorer...");
-    window.open(`https://hashscan.io/mainnet/transaction/${nft.hederaTransactionId}`, "_blank");
+    window.open(
+      `https://hashscan.io/mainnet/transaction/${nft.hederaTransactionId}`,
+      "_blank"
+    );
   };
 
   const handleNFTChange = (newNFT: typeof nft) => {
@@ -53,7 +57,7 @@ const ProfileNFTCard = ({ nft }: ProfileNFTCardProps) => {
           className="relative aspect-square overflow-hidden cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
-          <img
+          <Img
             src={nft.image}
             alt={nft.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
@@ -140,7 +144,7 @@ const ProfileNFTCard = ({ nft }: ProfileNFTCardProps) => {
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
         nft={currentNFT}
-        onNFTChange={handleNFTChange}
+        onNFTChange={() => handleNFTChange(currentNFT)}
       />
     </>
   );
