@@ -134,7 +134,7 @@ const Login = () => {
                 disabled
               >
                 <Wallet className="h-4 w-4 mr-2" />
-                Connect Hedera Wallet (Coming Soon)
+                Connect Hasgraph Wallet (Coming Soon)
               </Button>
 
               <p className="text-center text-sm text-muted-foreground">

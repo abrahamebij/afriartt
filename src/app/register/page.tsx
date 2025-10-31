@@ -109,7 +109,9 @@ const Register = () => {
                   type="text"
                   placeholder="Enter your full name"
                   value={formData.fullName}
-                  onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -121,7 +123,9 @@ const Register = () => {
                   type="email"
                   placeholder="Enter your email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -134,7 +138,9 @@ const Register = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Create a password"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     required
                   />
                   <button
@@ -142,7 +148,11 @@ const Register = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -155,7 +165,12 @@ const Register = () => {
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
                     required
                   />
                   <button
@@ -163,7 +178,11 @@ const Register = () => {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
-                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -192,12 +211,15 @@ const Register = () => {
                 disabled
               >
                 <Wallet className="h-4 w-4 mr-2" />
-                Connect Hedera Wallet (Coming Soon)
+                Connect Hasgraph Wallet (Coming Soon)
               </Button>
 
               <p className="text-center text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <Link href="/login" className="text-primary hover:underline font-medium">
+                <Link
+                  href="/login"
+                  className="text-primary hover:underline font-medium"
+                >
                   Log in
                 </Link>
               </p>

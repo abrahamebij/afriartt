@@ -116,7 +116,7 @@ const Upload = () => {
     // This will be replaced with actual HashConnect integration
     setWalletConnected(true);
     setWalletAddress("0.0.1234567");
-    toast.success("Your Hedera wallet has been connected successfully.");
+    toast.success("Your Hasgraph Wallet has been connected successfully.");
   };
 
   const handleFileChange = (selectedFile: File) => {
@@ -337,7 +337,7 @@ const Upload = () => {
             <Alert className="mb-6 border-primary/50 bg-primary/5 items-center">
               <Wallet className="h-4 w-4" />
               <AlertDescription className="flex items-center justify-between">
-                <span>Connect your Hedera wallet to mint NFTs</span>
+                <span>Connect your Hasgraph Wallet to mint NFTs</span>
                 <Button size="sm" onClick={connectWallet}>
                   Connect Wallet
                 </Button>
