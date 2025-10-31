@@ -35,7 +35,6 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import Img from "@/components/ui/Img";
 
 const Upload = () => {
   const { user } = useAuth();
@@ -264,7 +263,7 @@ const Upload = () => {
               {previewUrl && (
                 <div className="relative w-full max-w-md mx-auto aspect-square rounded-lg overflow-hidden">
                   {file?.type.startsWith("image/") && (
-                    <Img
+                    <img
                       src={previewUrl}
                       alt={title}
                       className="w-full h-full object-cover"
@@ -291,7 +290,7 @@ const Upload = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onClick={() => router.push(`/profile/${user.email}`)}>
+                <Button onClick={() => router.push(`/profile`)}>
                   View in Profile
                 </Button>
                 <Button
@@ -346,10 +345,12 @@ const Upload = () => {
           )}
 
           {walletConnected && (
-            <Alert className="mb-6 border-primary bg-primary/5">
-              <CheckCircle2 className="h-4 w-4 text-primary" />
-              <AlertDescription className="flex items-center justify-between">
+            <Alert className="mb-6 border-primary bg-primary/5 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
                 <span>Wallet connected: {walletAddress}</span>
+              </div>
+              <AlertDescription className="flex items-center ">
                 <Button
                   size="sm"
                   variant="ghost"
@@ -410,7 +411,7 @@ const Upload = () => {
                     <div className="space-y-4">
                       <div className="relative w-full max-w-md mx-auto aspect-square rounded-lg overflow-hidden bg-muted">
                         {file.type.startsWith("image/") && (
-                          <Img
+                          <img
                             src={previewUrl}
                             alt="Preview"
                             className="w-full h-full object-cover"
@@ -483,8 +484,9 @@ const Upload = () => {
                     id="description"
                     placeholder="Describe your artwork, its inspiration, and cultural significance..."
                     value={description}
+                    className="h-40"
                     onChange={(e) => setDescription(e.target.value)}
-                    rows={5}
+                    rows={12}
                     disabled={isMinting}
                   />
                 </div>

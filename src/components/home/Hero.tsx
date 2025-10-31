@@ -36,9 +36,11 @@ const Hero = () => {
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="text-lg px-8">
-                Create NFT
-              </Button>
+              <Link href={"/upload"}>
+                <Button size="lg" variant="outline" className="text-lg px-8">
+                  Create NFT
+                </Button>
+              </Link>
             </div>
 
             {/* Stats */}
