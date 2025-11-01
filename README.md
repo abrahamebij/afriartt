@@ -2,6 +2,9 @@
 
 **AfriArtt** is a decentralized NFT marketplace built on the **Hedera Hashgraph** network, dedicated to empowering African digital artists. We merge cultural authenticity with modern Web3 infrastructure, providing a transparent, global platform for artists to tokenize their work and earn automated royalties.
 
+<img width="1350" height="593" alt="image" src="https://github.com/user-attachments/assets/dd247c4b-8b55-4da5-b7af-656d66b0b90e" />
+
+
 ## 🛑 Problem Statement: The Erosion of African Cultural Heritage
 
 The most pressing challenge facing African art today is the **accelerated erosion of traditional cultural practices**—including ancestral sculptures, ritual paintings, and historical writings. These art forms are rapidly *dying out* due to:
@@ -17,8 +20,8 @@ The most pressing challenge facing African art today is the **accelerated erosio
 | Asset                          | Link                                                                                                                                               |
 | :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Deployed Application**       | [https://afriartt.vercel.app/](https://afriartt.vercel.app/)                                                                                       |
-| **Pitch Deck / Presentation**  | []                                                                                                                                                 |
-| **Hackathon Submission/Cert.** | [https://certs.hashgraphdev.com/08df8a77-376d-4d49-9dd9-8cc3583a4be9.pdf](https://certs.hashgraphdev.com/08df8a77-376d-4d49-9dd9-8cc3583a4be9.pdf) |
+| **Pitch Deck / Presentation**  | [https://gamma.app/docs/AfriArtt-h5fr0evi7pl2jct](https://gamma.app/docs/AfriArtt-h5fr0evi7pl2jct) |
+| **Hedera Certification** | [https://certs.hashgraphdev.com/08df8a77-376d-4d49-9dd9-8cc3583a4be9.pdf](https://certs.hashgraphdev.com/08df8a77-376d-4d49-9dd9-8cc3583a4be9.pdf) |
 
 -----
 
