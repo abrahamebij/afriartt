@@ -29,7 +29,7 @@ const nfts = Array.from({ length: 24 }, (_, i) => ({
   title: `African Art #${i + 1}`,
   creator: `Artist ${Math.floor(Math.random() * 10) + 1}`,
   price: (Math.random() * 5 + 0.5).toFixed(2),
-  image: `/src/assets/nft-${(i % 6) + 1}.jpg`,
+  image: `/images/arts/nft-${(i % 12) + 1}.png`,
   likes: Math.floor(Math.random() * 500),
 }));
 

@@ -214,7 +214,7 @@ const Upload = () => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Step 3: Minting on Hedera
-      setMintingStep("Minting on Hedera blockchain...");
+      setMintingStep("Minting on Hedera...");
       setMintingProgress(75);
       await new Promise((resolve) => setTimeout(resolve, 2000));
 

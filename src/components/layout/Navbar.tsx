@@ -57,9 +57,11 @@ const Navbar = () => {
               Explore
             </Button>
           </Link>
-          <Button variant="ghost" className="hidden lg:inline-flex">
-            Create
-          </Button>
+          <Link href="/upload">
+            <Button variant="ghost" className="hidden lg:inline-flex">
+              Create
+            </Button>
+          </Link>
 
           {user ? (
             <DropdownMenu>

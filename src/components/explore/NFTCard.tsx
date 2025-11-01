@@ -37,32 +37,32 @@ const NFTCard = ({ nft }: NFTCardProps) => {
 
   return (
     <>
-      <Card className="group overflow-hidden border-border bg-card hover:border-primary/50 transition-all duration-300 hover-lift">
+      <Card className="group pt-0 pb-4 overflow-hidden border-border bg-card hover:border-primary/50 transition-all duration-300 hover-lift">
         {/* Image */}
         <div
           className="relative aspect-square overflow-hidden cursor-pointer"
           onClick={() => setDrawerOpen(true)}
         >
-        <Img
-          src={nft.image}
-          alt={nft.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        />
-        
-        {/* Like Button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleLike();
-          }}
-          className="absolute top-3 right-3 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110"
-        >
-          <Heart
-            className={`h-5 w-5 transition-all ${
-              isLiked ? "fill-primary text-primary" : "text-foreground"
-            }`}
+          <Img
+            src={nft.image}
+            alt={nft.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
-        </button>
+
+          {/* Like Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLike();
+            }}
+            className="absolute top-3 right-3 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110"
+          >
+            <Heart
+              className={`h-5 w-5 transition-all ${
+                isLiked ? "fill-primary text-primary" : "text-foreground"
+              }`}
+            />
+          </button>
 
           {/* Hover Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
@@ -72,39 +72,39 @@ const NFTCard = ({ nft }: NFTCardProps) => {
           </div>
         </div>
 
-      {/* Info */}
-      <div className="p-4 space-y-3">
-        <div>
-          <h3 className="font-bold text-lg truncate">{nft.title}</h3>
-          <p className="text-sm text-muted-foreground">by {nft.creator}</p>
-        </div>
-
-        <div className="flex items-center justify-between">
+        {/* Info */}
+        <div className="p-4 space-y-3">
           <div>
-            <p className="text-xs text-muted-foreground">Price</p>
-            <p className="font-bold text-primary">{nft.price} HBAR</p>
+            <h3 className="font-bold text-lg truncate">{nft.title}</h3>
+            <p className="text-sm text-muted-foreground">by {nft.creator}</p>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-muted-foreground">{likes} likes</p>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground">Price</p>
+              <p className="font-bold text-primary">{nft.price} HBAR</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-muted-foreground">{likes} likes</p>
+            </div>
           </div>
+
+          <Button
+            className="w-full"
+            variant="outline"
+            onClick={() => setDrawerOpen(true)}
+          >
+            Buy Now
+          </Button>
         </div>
+      </Card>
 
-        <Button
-          className="w-full"
-          variant="outline"
-          onClick={() => setDrawerOpen(true)}
-        >
-          Buy Now
-        </Button>
-      </div>
-    </Card>
-
-    <NFTDetailDrawer
-      open={drawerOpen}
-      onOpenChange={setDrawerOpen}
-      nft={currentNFT}
-      onNFTChange={handleNFTChange}
-    />
+      <NFTDetailDrawer
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        nft={currentNFT}
+        onNFTChange={handleNFTChange}
+      />
     </>
   );
 };

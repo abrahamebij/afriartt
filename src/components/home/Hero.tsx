@@ -12,7 +12,7 @@ const Hero = () => {
           <div className="space-y-8 animate-slide-up">
             <div className="inline-block">
               <span className="px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                Built on Hedera Blockchain
+                Built on Hedera
               </span>
             </div>
 

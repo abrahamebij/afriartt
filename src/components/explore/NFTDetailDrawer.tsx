@@ -46,7 +46,7 @@ const relatedNFTs = Array.from({ length: 6 }, (_, i) => ({
   title: `Related Art #${i + 1}`,
   creator: `Artist ${i + 1}`,
   price: (Math.random() * 5 + 0.5).toFixed(2),
-  image: `/src/assets/nft-${(i % 6) + 1}.jpg`,
+  image: `/images/arts/nft-${(i % 12) + 1}.png`,
   likes: Math.floor(Math.random() * 200),
 }));
 
@@ -72,12 +72,13 @@ const NFTDetailDrawer = ({
   const handleRelatedClick = (relatedNFT: typeof nft) => {
     if (onNFTChange) {
       onNFTChange(relatedNFT);
+      scrollAreaRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh] bg-card border-t-2 border-primary/20">
+    <Drawer open={open} activeSnapPoint={1} onOpenChange={onOpenChange}>
+      <DrawerContent className="max-h-[100vh] bg-card border-t-2 border-primary/20">
         <DrawerHeader className="border-b border-border px-6 py-4">
           <div className="flex items-start justify-between">
             <div className="flex-1">
