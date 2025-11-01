@@ -38,6 +38,45 @@ We focused on delivering the core loop: **Wallet Authentication $\rightarrow$ Mi
 | **NFT Detail Drawer**       | Sliding detail panel (`Framer Motion`) showing the full artwork, creator, price, and purchase/transaction options.                                    |
 | **Hedera Transactions**     | Integration with the **Hedera SDK** for gas-efficient minting and peer-to-peer sale/transfer of NFTs.                                                 |
 
+```
++--------------------------------+                  +--------------------------------+
+|  FRONTEND (Next.js / UI)       |                  |  BACKEND SERVICES              |
+|                                |                  |                                |
+|  1. User Action (Login/Mint)   |                  |  A. Web2 IDENTITY (Supabase DB)|
++--------v-----------------------+                  |     - Auth.users (JWT Check)   |
+         |                                          |     - artists Table (Hedera ID)|
+         |                                          |  B. HEDERA/IPFS (Blockchain)   |
+         |                                          |     - Hedera SDK (Minting/TX)  |
+         |                                          |     - IPFS (File Storage)      |
++--------v-----------------------+                  +--------------------------------+
+|  2. API ROUTE (Next.js Server) |
+|     - Validates Request        |
++--------v-----------------------+
+
+       (AUTH / LOGIN FLOW)
+              |
+              | 3a. Check Auth Status (JWT)
+              +-----------------------------> A (Supabase Identity)
+              |
+              | 3b. Validate Wallet Signature (If using HashPack)
+              +-----------------------------> B (Hedera SDK)
+              
+              
+       (MINTING FLOW - Protected Route)
+              |
+              | 4. Insert Metadata & Get User ID
+              +-----------------------------> A (Supabase Database)
+              |
+              | 5. Upload File & Mint Token
+              +-----------------------------> B (IPFS/Hedera SDK)
+              
+              
+       (DATA READ FLOW)
+              |
+              | 6. Fetch NFT Catalog, Prices, etc.
+              +<----------------------------+ A (Supabase Data API)
+```
+
 -----
 
 ## 🛠️ Technology Stack
